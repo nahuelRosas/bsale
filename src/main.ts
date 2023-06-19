@@ -30,6 +30,7 @@ async function bootstrap() {
 
   // Check the environment variable NODE_ENV to determine if the application is running in production
   const env = process.env.NODE_ENV;
+  const port = process.env.PORT;
   if (env !== 'production') {
     // In non-production environments, add LoggingInterceptor and ResponseInterceptor as global interceptors
     app.useGlobalInterceptors(
@@ -56,7 +57,7 @@ async function bootstrap() {
   }
 
   // Start the application and listen on port 3000
-  await app.listen(3000);
+  await app.listen(port|| 3000);
 }
 
 // Start the application by calling the bootstrap function
