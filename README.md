@@ -1,42 +1,4 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Tutorial: Explicación de la función getFlightData()</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
-    }
-    h1 {
-      color: #333;
-      font-size: 24px;
-      margin-bottom: 10px;
-    }
-    h2 {
-      color: #333;
-      font-size: 20px;
-      margin-top: 30px;
-      margin-bottom: 10px;
-    }
-    p {
-      color: #666;
-      font-size: 16px;
-      margin-bottom: 10px;
-    }
-    ul {
-      list-style-type: disc;
-      margin-left: 20px;
-      margin-bottom: 10px;
-    }
-    pre {
-      background-color: #f8f8f8;
-      padding: 10px;
-      border-radius: 4px;
-      overflow-x: auto;
-    }
-  </style>
-</head>
-<body>
+
   <h1>Tutorial: Explicación de la función getFlightData()</h1>
   <p>En este tutorial, vamos a explicar la lógica y el propósito de cada paso en la función <code>getFlightData()</code>. Esta función se utiliza para obtener los datos de un vuelo, los pases de abordar, los pasajeros y realizar la asignación de asientos.</p>
 
@@ -107,5 +69,4 @@ a la disponibilidad de asientos contiguos. Se proporcionan los asientos contiguo
   <p>Una vez que se han procesado todos los grupos de pases de abordar, se retorna una respuesta exitosa con el código 200 y los datos del vuelo (<code>this.data</code>).</p>
 
   <p>Esto concluye la explicación de la función <code>getFlightData()</code>. A lo largo del proceso, se recuperan los datos del vuelo, los pases de abordar y los pasajeros, se agrupan y ordenan los pases de abordar, se buscan asientos contiguos y se asignan asientos a los pasajeros. El objetivo principal es obtener los datos necesarios para el vuelo y realizar la asignación de asientos de manera eficiente.</p>
-</body>
-</html>
+
