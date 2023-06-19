@@ -20,7 +20,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   // Add cookie-parser middleware to parse cookies in requests
-  app.use(cookieParser());
+  // app.use(cookieParser());
 
   // Set AllExceptionFilter as a global filter to handle exceptions and logs using LoggerService
   app.useGlobalFilters(new AllExceptionFilter(new LoggerService()));
