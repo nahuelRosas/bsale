@@ -1,72 +1,120 @@
+# Flight Service Readme (Readme del Servicio de Vuelo)
 
-  <h1>Tutorial: Explicación de la función getFlightData()</h1>
-  <p>En este tutorial, vamos a explicar la lógica y el propósito de cada paso en la función <code>getFlightData()</code>. Esta función se utiliza para obtener los datos de un vuelo, los pases de abordar, los pasajeros y realizar la asignación de asientos.</p>
+Este fragmento de código representa una clase `FlightService` que es responsable de obtener datos de vuelo, agrupar y ordenar los pases de abordar, segregar los pases de abordar por edad del pasajero, encontrar asientos adyacentes y asignar asientos a los pases de abordar según la disponibilidad de asientos. Vamos a revisar el código y entender su funcionalidad.
 
-  <h2>Paso 1: Definición y estructura de la función</h2>
-  <p>La función <code>getFlightData()</code> es una función asincrónica que recibe un objeto destructurado con una propiedad <code>id</code> de tipo número. Devuelve una promesa con un tipo de respuesta que puede ser exitosa o de error. Aquí está la estructura de la función:</p>
-  <pre>
-  async getFlightData({ id }: { id: number }): Promise<
-    | { code: number; data: object }
-    | {
-        code: number;
-        data: {
-          flight: flight;
-          availableSeats: seat[];
-          boardingPasses: BoardingPassWithDetails[];
-          passengers: passenger[];
-          groupedBoardingPasses: Record<string, BoardingPassWithDetails[]>;
-        };
-      }
-  > {
-    // ... Código del paso 2 al paso 15 ...
-  }
-  </pre>
+## Uso
 
-  <h2>Paso 2: Conversión del ID del vuelo</h2>
-  <p>En este paso, se convierte el ID del vuelo a un número y se asigna a la variable <code>flightId</code>. Esto se hace para asegurarse de que el ID sea del tipo esperado.</p>
+Para utilizar la clase `FlightService`, debes importarla desde el módulo especificado:
 
-  <h2>Paso 3: Obtención de los detalles del vuelo</h2>
-  <p>Se utiliza la función <code>this.flightsRepository.getFlightById()</code> para obtener los detalles del vuelo correspondiente al <code>flightId</code> proporcionado. Los detalles del vuelo se asignan a <code>this.data.flight</code>.</p>
+```typescript
+import { FlightService } from 'ruta/al/servicio/de/vuelo';
+```
 
-  <h2>Paso 4: Manejo de vuelo no encontrado</h2>
-  <p>Si no se encuentra el vuelo (es decir, <code>this.data.flight</code> es falsy), se retorna una respuesta de error con el código 404 y un objeto de datos vacío.</p>
+Luego puedes crear una instancia de la clase `FlightService` y utilizar sus métodos.
 
-  <h2>Paso 5: Obtención de los pases de abordar</h2>
-  <p
+```typescript
+const flightService = new FlightService(flightsRepository, exceptionsService);
+```
 
-> Se utiliza la función <code>this.flightsRepository.getBoardingPassesByFlightId()</code> para obtener los pases de abordar del vuelo correspondiente al <code>flightId</code>. Los pases de abordar se asignan a <code>this.data.boardingPasses</code>.</p>
+## Resumen de la Clase
 
-  <h2>Paso 6: Obtención de los pasajeros</h2>
-  <p>Se utiliza la función <code>this.flightsRepository.getPassengersByBoardingPasses()</code> para obtener los pasajeros asociados a los pases de abordar. Los pasajeros se asignan a <code>this.data.passengers</code>.</p>
+### Constructor
 
-  <h2>Paso 7: Agrupación y ordenación de los pases de abordar</h2>
-  <p>Se utiliza la función <code>groupBoardingPassesByPurchaseId()</code> para agrupar los pases de abordar por ID de compra y ordenarlos por edad del pasajero. Los pases de abordar agrupados se asignan a <code>this.data.groupedBoardingPasses</code>.</p>
+El constructor de la clase `FlightService` inicializa la clase y establece las dependencias requeridas:
 
-  <h2>Paso 8: Obtención de los asientos disponibles</h2>
-  <p>Se utiliza la función <code>this.flightsRepository.getAvailableSeats()</code> para obtener los asientos disponibles para el vuelo. Se proporciona el ID del avión (<code>airplaneId</code>) y el <code>flightId</code>. Los asientos disponibles se asignan a <code>this.data.availableSeats</code>.</p>
+```typescript
+constructor(
+  private readonly flightsRepository: DatabaseFlightsRepository,
+  private readonly exceptionsService: ExceptionsService,
+)
+```
 
-  <h2>Paso 9: Procesamiento de los grupos de pases de abordar</h2>
-  <p>Se itera sobre cada <code>purchaseId</code> en <code>this.data.groupedBoardingPasses</code> y se realiza un procesamiento para cada grupo de pases de abordar.</p>
+### Propiedades
 
-  <h2>Paso 10: Obtención de los pases de abordar del grupo actual</h2>
-  <p>Se obtienen los pases de abordar correspondientes al <code>purchaseId</code> actual y se asignan a la variable <code>boardingPasses</code>.</p>
+La clase tiene un objeto privado `data` que almacena información relacionada con el vuelo:
 
-  <h2>Paso 11: Segregación de los pases de abordar por edad</h2>
-  <p>Se utiliza la función <code>segregateBoardingPassesByAge()</code> para segregar los pases de abordar en grupos de adultos y niños, según la edad del pasajero. Los pases de abordar segregados se asignan a la variable <code>segregatedBoardingPasses</code>.</p>
+```typescript
+private data = {
+  flight: {} as flight,
+  availableSeats: [] as seat[],
+  boardingPasses: [] as BoardingPassWithDetails[],
+  passengers: [] as passenger[],
+  groupedBoardingPasses: {} as Record<string, BoardingPassWithDetails[]>,
+};
+```
 
-  <h2>Paso 12: Búsqueda de asientos contiguos</h2>
-  <p>Se utiliza la función <code>findAdjacentSeats()</code> para encontrar asientos contiguos para los pases de abordar dados. Se proporcionan los asientos disponibles (<code>this.data.availableSeats</code>) y los pases de abordar segregados (<code>segregatedBoardingPasses</code>). El resultado de los asientos contiguos se asigna a la variable <code>adjacentSeats</code>.</p>
+### Métodos
 
-  <h2>Paso 13: Asignación de asientos</h2>
-  <p>Se utiliza la función <code>assignSeats()</code> para asignar asientos a los pases de abordar en base
+#### `getFlightData({ id })`
 
-a la disponibilidad de asientos contiguos. Se proporcionan los asientos contiguos (<code>adjacentSeats</code>), los pases de abordar originales (<code>this.data.boardingPasses</code>), los asientos disponibles (<code>this.data.availableSeats</code>) y el grupo de pases de abordar actual (<code>boardingPasses</code>). El resultado de la asignación de asientos se asigna a la variable <code>assignResult</code>.</p>
+Este método obtiene los datos del vuelo, incluyendo los asientos disponibles, los pases de abordar, los pasajeros y los pases de abordar agrupados. Toma como parámetro un objeto con el ID del vuelo y devuelve una promesa con los datos del vuelo o un código de error y un objeto vacío si no se encuentra el vuelo.
 
-  <h2>Paso 14: Actualización de los pases de abordar y los asientos disponibles</h2>
-  <p>Se actualizan los pases de abordar y los asientos disponibles después de la asignación de asientos, utilizando los valores obtenidos de <code>assignResult</code>.</p>
+```typescript
+async getFlightData({ id }: { id: number }): Promise<
+  | { code: number; data: object }
+  | {
+      code: number;
+      data: {
+        flight: flight;
+        availableSeats: seat[];
+        boardingPasses: BoardingPassWithDetails[];
+        passengers: passenger[];
+        groupedBoardingPasses: Record<string, BoardingPassWithDetails[]>;
+      };
+    }
+>
+```
 
-  <h2>Paso 15: Retorno de los datos del vuelo</h2>
-  <p>Una vez que se han procesado todos los grupos de pases de abordar, se retorna una respuesta exitosa con el código 200 y los datos del vuelo (<code>this.data</code>).</p>
+#### `groupBoardingPassesByPurchaseId({ boardingPasses })`
 
-  <p>Esto concluye la explicación de la función <code>getFlightData()</code>. A lo largo del proceso, se recuperan los datos del vuelo, los pases de abordar y los pasajeros, se agrupan y ordenan los pases de abordar, se buscan asientos contiguos y se asignan asientos a los pasajeros. El objetivo principal es obtener los datos necesarios para el vuelo y realizar la asignación de asientos de manera eficiente.</p>
+Este método agrupa los pases de abordar por ID de compra y los ordena por edad del pasajero. Toma como parámetro un objeto con los pases de abordar y devuelve una promesa con un registro que contiene los pases de abordar agrupados y ordenados.
 
+```typescript
+async groupBoardingPassesByPurchaseId({
+  boardingPasses,
+}: {
+  boardingPasses: BoardingPassWithDetails[];
+}): Promise<Record<string, BoardingPassWithDetails[]>> 
+```
+
+#### `segregateBoardingPassesByAge({ boardingPasses, passengers })`
+
+Este método segrega los pases de abordar por edad del pasajero en adultos y niños. Toma como parámetro un objeto con los pases de abordar y los pasajeros, y devuelve una promesa con un objeto que contiene los pases de abordar segregados para adultos y niños.
+
+```typescript
+async segregateBoardingPassesByAge({
+  boardingPasses
+
+,
+  passengers,
+}: {
+  boardingPasses: BoardingPassWithDetails[];
+  passengers: passenger[];
+}): Promise<{ adults: BoardingPassWithDetails[]; children: BoardingPassWithDetails[] }> 
+```
+
+#### `findAdjacentSeats({ numSeats })`
+
+Este método encuentra asientos adyacentes disponibles en el vuelo. Toma como parámetro el número de asientos contiguos deseados y devuelve una promesa con un array de asientos adyacentes disponibles.
+
+```typescript
+async findAdjacentSeats({ numSeats }: { numSeats: number }): Promise<seat[]> 
+```
+
+#### `assignSeatsToBoardingPasses({ boardingPasses })`
+
+Este método asigna asientos a los pases de abordar según la disponibilidad de asientos. Toma como parámetro los pases de abordar y devuelve una promesa con los pases de abordar actualizados con los asientos asignados.
+
+```typescript
+async assignSeatsToBoardingPasses({
+  boardingPasses,
+}: {
+  boardingPasses: BoardingPassWithDetails[];
+}): Promise<BoardingPassWithDetails[]> 
+```
+
+## Finalidad
+
+El objetivo de este archivo es proporcionar una clase `FlightService` reutilizable que encapsule la lógica relacionada con la gestión de datos de vuelo y pases de abordar. La clase permite obtener datos de vuelo, agrupar y ordenar pases de abordar, segregar pases de abordar por edad, encontrar asientos adyacentes y asignar asientos a los pases de abordar según la disponibilidad.
+
+La finalidad principal es facilitar el desarrollo de aplicaciones relacionadas con la gestión de vuelos y pases de abordar, proporcionando métodos y funciones que realizan las operaciones necesarias de manera eficiente y organizada. Los métodos de la clase `FlightService` pueden ser utilizados por otras partes del código para obtener y manipular los datos relacionados con los vuelos y pases de abordar de manera coherente y sin duplicar código.
